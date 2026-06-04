@@ -1,0 +1,11 @@
+{
+  "title": "Wearable Accelerometer Data Logger",
+  "date": "2025-04-15",
+  "semester": "Spring 2025",
+  "description": "Designed a wearable accelerometer system using an Arduino Nano 33 BLE Rev2 that logs real-time motion data and streams it via Bluetooth to a custom Flutter mobile application.",
+  "tags": ["Arduino", "BLE", "C++", "Flutter", "Firebase"],
+  "category": "Embedded Systems",
+  "cover": "cover.jpg",
+  "github": "https://github.com/MarcoTambuITA",
+  "featured": true
+}

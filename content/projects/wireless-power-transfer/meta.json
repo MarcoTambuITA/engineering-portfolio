@@ -1,0 +1,11 @@
+{
+  "title": "Wireless Power Transfer System",
+  "date": "2024-11-20",
+  "semester": "Fall 2024",
+  "description": "Engineered a magnetic resonant wireless power transfer system and a Python-based simulation tool to optimize coil coupling and efficiency.",
+  "tags": ["Python", "Electromagnetics", "Simulation", "Circuit Design"],
+  "category": "RF & Electromagnetics",
+  "cover": "wpt_cover.jpg",
+  "github": "https://github.com/MarcoTambuITA/WPT_Python",
+  "featured": true
+}

@@ -1,0 +1,82 @@
+# Wearable Accelerometer Data Logger
+
+## The Problem
+
+Traditional motion analysis in sports and rehabilitation requires expensive lab equipment that isn't accessible to most students and researchers. I wanted to build a **portable, low-cost system** that could log accelerometer data in real-time and make it accessible through a mobile app.
+
+## My Approach
+
+I built this project around the **Arduino Nano 33 BLE Rev2**, which has a built-in LSM9DS1 IMU (9-axis accelerometer, gyroscope, and magnetometer). The key design decisions were:
+
+1. **Bluetooth Low Energy (BLE)** for wireless data streaming — low power consumption and native mobile support
+2. **Flutter** for the mobile app — cross-platform (iOS + Android) from a single codebase
+3. **Firebase** for cloud storage — real-time database for logging sessions
+
+### Hardware
+
+The sensor module consists of:
+
+- Arduino Nano 33 BLE Rev2 (Cortex-M4F processor, BLE 5.0)
+- 3.7V LiPo battery with voltage regulator
+- Custom 3D-printed wrist enclosure (designed in Fusion 360)
+
+### Firmware
+
+The Arduino firmware handles:
+
+```cpp
+#include <ArduinoBLE.h>
+#include <Arduino_LSM9DS1.h>
+
+BLEService accelService("19B10000-E8F2-537E-4F6C-D104768A1214");
+BLECharacteristic accelChar("19B10001-E8F2-537E-4F6C-D104768A1214",
+                            BLERead | BLENotify, 12);
+
+void setup() {
+  IMU.begin();
+  BLE.begin();
+  BLE.setLocalName("AccelLogger");
+  BLE.setAdvertisedService(accelService);
+  accelService.addCharacteristic(accelChar);
+  BLE.addService(accelService);
+  BLE.advertise();
+}
+```
+
+Data is sampled at **100 Hz** and transmitted as packed float arrays over BLE notifications.
+
+### Mobile App
+
+The Flutter app provides:
+
+- **Real-time plotting** of X, Y, Z acceleration data
+- **Session recording** with start/stop controls
+- **Data export** to CSV for MATLAB analysis
+- **Firebase sync** for cloud backup of all sessions
+
+## Results
+
+The system achieved:
+
+| Metric | Value |
+|--------|-------|
+| Sampling Rate | 100 Hz |
+| BLE Latency | < 15 ms |
+| Battery Life | ~4 hours continuous |
+| Data Accuracy | ±0.01 g resolution |
+
+The wearable successfully logged motion data during walking, running, and hand gesture recognition tests. Data was exported to MATLAB for spectral analysis and pattern classification.
+
+## Lessons Learned
+
+- **BLE data throughput** is limited — I had to carefully pack the 12-byte float payloads and optimize the connection interval
+- **Battery management** is critical for wearables — the BLE radio draws significant current during advertising
+- **Cross-platform mobile development** with Flutter saved enormous time compared to building native iOS and Android apps separately
+- **Signal processing fundamentals** matter — raw accelerometer data is noisy, and I learned to apply low-pass filtering before analysis
+
+## What's Next
+
+I'm planning to add:
+- **Edge ML** on the Arduino using TensorFlow Lite for on-device gesture classification
+- **PCB design** in Altium to replace the breadboard prototype with a custom board
+- **Additional sensors** (heart rate, temperature) for a more complete health monitoring platform

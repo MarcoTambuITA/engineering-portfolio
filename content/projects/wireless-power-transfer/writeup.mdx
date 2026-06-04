@@ -1,0 +1,23 @@
+# Wireless Power Transfer (WPT) Simulation
+
+## The Goal
+Magnetic resonant coupling is a powerful technique for transferring energy over mid-range distances without wires. To design an efficient WPT system, I needed to precisely calculate mutual inductance and optimize coil geometry before building physical prototypes.
+
+## Implementation
+I developed a comprehensive Python simulation framework capable of modeling multi-coil systems.
+
+### Key Features
+- **Biot-Savart Integration**: Calculates magnetic field distribution in 3D space.
+- **Mutual Inductance Matrix**: Computes coupling coefficients between arbitrary coil pairs.
+- **Efficiency Optimization**: Sweeps through resonant frequencies to find the maximum power transfer efficiency point.
+
+## Results
+The simulation allowed me to predict the system's performance with a high degree of accuracy. When I built the physical coils, the measured efficiency was within 5% of the simulated values.
+
+| Parameter | Simulated | Measured |
+| --- | --- | --- |
+| Resonant Frequency | 1.25 MHz | 1.22 MHz |
+| Max Efficiency | 82.4% | 78.1% |
+| Q-Factor | 150 | 135 |
+
+The tool proved invaluable for reducing the number of physical iterations needed to achieve the target performance.
