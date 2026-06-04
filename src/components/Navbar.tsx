@@ -2,20 +2,23 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { usePathname, useRouter } from "next/navigation";
 
-const NAV_LINKS = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
-  { label: "Projects", href: "#projects" },
-  { label: "Involvement", href: "#involvement" },
-  { label: "Journey", href: "#journey" },
-  { label: "Contact", href: "#contact" },
+const navLinks = [
+  { name: "About", id: "about" },
+  { name: "Skills", id: "skills" },
+  { name: "Projects", id: "projects" },
+  { name: "Involvement", id: "involvement" },
+  { name: "Journey", id: "journey" },
+  { name: "Contact", id: "contact" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("");
+  const pathname = usePathname();
+  const router = useRouter();
 
   // Track scroll position for background opacity
   useEffect(() => {
@@ -40,8 +43,7 @@ export default function Navbar() {
       { rootMargin: "-20% 0px -70% 0px" }
     );
 
-    NAV_LINKS.forEach(({ href }) => {
-      const id = href.replace("#", "");
+    navLinks.forEach(({ id }) => {
       const el = document.getElementById(id);
       if (el) observer.observe(el);
     });
@@ -51,14 +53,20 @@ export default function Navbar() {
 
   const handleNavClick = (
     e: React.MouseEvent<HTMLAnchorElement>,
-    href: string
+    id: string
   ) => {
     e.preventDefault();
-    const el = document.querySelector(href);
+    setMobileOpen(false);
+
+    if (pathname !== "/") {
+      router.push(`/#${id}`);
+      return;
+    }
+
+    const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: "smooth" });
     }
-    setMobileOpen(false);
   };
 
   return (
@@ -76,10 +84,12 @@ export default function Navbar() {
         <div className="section-container flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <a
-            href="#"
+            href="/"
             onClick={(e) => {
-              e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              if (pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
             }}
             className="text-white font-heading font-bold text-lg md:text-xl hover:text-electric-400 transition-colors"
           >
@@ -88,19 +98,19 @@ export default function Navbar() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8">
-            {NAV_LINKS.map(({ label, href }) => (
+            {navLinks.map(({ name, id }) => (
               <a
-                key={href}
-                href={href}
-                onClick={(e) => handleNavClick(e, href)}
+                key={id}
+                href={`/#${id}`}
+                onClick={(e) => handleNavClick(e, id)}
                 className={`text-sm font-medium transition-colors relative ${
-                  activeSection === href.replace("#", "")
+                  activeSection === id
                     ? "text-electric-400"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
-                {label}
-                {activeSection === href.replace("#", "") && (
+                {name}
+                {activeSection === id && (
                   <motion.div
                     layoutId="activeNav"
                     className="absolute -bottom-1 left-0 right-0 h-0.5 bg-electric-500 rounded-full"
@@ -150,17 +160,17 @@ export default function Navbar() {
             className="fixed inset-0 z-40 bg-navy-900/95 backdrop-blur-xl md:hidden"
           >
             <div className="flex flex-col items-center justify-center h-full gap-8">
-              {NAV_LINKS.map(({ label, href }, i) => (
+              {navLinks.map(({ name, id }, i) => (
                 <motion.a
-                  key={href}
-                  href={href}
-                  onClick={(e) => handleNavClick(e, href)}
+                  key={id}
+                  href={`/#${id}`}
+                  onClick={(e) => handleNavClick(e, id)}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 + 0.1 }}
                   className="text-2xl font-heading font-semibold text-gray-200 hover:text-electric-400 transition-colors"
                 >
-                  {label}
+                  {name}
                 </motion.a>
               ))}
             </div>

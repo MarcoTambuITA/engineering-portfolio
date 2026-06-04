@@ -1,23 +1,49 @@
-# Wireless Power Transfer (WPT) Simulation
+# Unified Wireless Power Transfer (WPT) Simulator
 
-## The Goal
-Magnetic resonant coupling is a powerful technique for transferring energy over mid-range distances without wires. To design an efficient WPT system, I needed to precisely calculate mutual inductance and optimize coil geometry before building physical prototypes.
+An open-source, dual-regime simulation framework that co-simulates spatial electromagnetic wave propagation alongside non-linear RF circuit electronics. Originally prototyped in MATLAB and fully migrated to a decoupled Python/Dash web architecture.
 
-## Implementation
-I developed a comprehensive Python simulation framework capable of modeling multi-coil systems.
+---
 
-### Key Features
-- **Biot-Savart Integration**: Calculates magnetic field distribution in 3D space.
-- **Mutual Inductance Matrix**: Computes coupling coefficients between arbitrary coil pairs.
-- **Efficiency Optimization**: Sweeps through resonant frequencies to find the maximum power transfer efficiency point.
+### 🚀 The TL;DR (Core Impact)
+* **The Engineering Problem:** Ideal textbook formulas fail at microwave frequencies (**2.45 GHz**) because they ignore non-linear hardware constraints like diode forward voltage drops (`V_f`) and parasitic capacitances (`C_J0`). 
+* **The Solution:** A unified engine that anchors theoretical physics (near-field and far-field) directly to automated empirical circuit data extracted from LTspice.
+* **The Outcome:** Successfully isolated and re-tuned a **91.78% efficient** rectenna architecture while proving why complex multi-stage multipliers represent a physical layout dead-end.
 
-## Results
-The simulation allowed me to predict the system's performance with a high degree of accuracy. When I built the physical coils, the measured efficiency was within 5% of the simulated values.
+---
 
-| Parameter | Simulated | Measured |
-| --- | --- | --- |
-| Resonant Frequency | 1.25 MHz | 1.22 MHz |
-| Max Efficiency | 82.4% | 78.1% |
-| Q-Factor | 150 | 135 |
+### 🛠️ System Architecture & Data Pipeline
+<WPTSimulatorWidget />
 
-The tool proved invaluable for reducing the number of physical iterations needed to achieve the target performance.
+* **Stateless Physics Core (`physics.py`):** Models near-field inductive coupling from first principles using the Neumann mutual inductance formula and the coupled-resonator figure of merit `U = k√(Q_1 Q_2)` (yielding a characteristic **1/d⁶** drop-off). Seamlessly transitions to far-field radiative limits via the Friis transmission equation (**1/d²** drop-off) using active frequency-dependent domain masks.
+* **Automated Data Ingestion (`parser.py`):** Replaced manual data exporting by writing continuous parametric sweeps (**-20 dBm to +20 dBm**) directly into the SPICE command space. A robust regular-expression text scanner strips out macOS UTF-16 null-bytes (`\x00`) and text-editor RTF wrappers to autonomously isolate output voltage data (`V_dc`).
+
+---
+
+### 📊 Rectifier Topology Benchmarking (At 0 dBm / 1 mW Drive)
+
+The framework evaluates four distinct architectures utilizing the Avago HSMS-2850 zero-bias Schottky diode (`I_S = 22 nA`, `C_J0 = 0.18 pF`) terminated into a **1 kΩ** load:
+
+| Topology | Matching Inductor (`L_1`) | Rectified DC Voltage (`V_DC`) | End-to-End Efficiency (`η`) |
+| :--- | :---: | :---: | :---: |
+| **Half-Wave Baseline** | 23.4 nH | 0.677 V | 45.83% |
+| **Full-Wave Bridge** | 23.4 nH | 0.302 V | 9.12% |
+| **Voltage Doubler (Un-tuned)** | 23.4 nH | 0.211 V | 4.45% |
+| **Voltage Doubler (Tuned)** | **11.7 nH** | **0.958 V** | **91.78%** |
+| **2-Stage Cockcroft-Walton** | 11.7 nH | 0.193 V | 3.72% |
+
+> 💡 **The "Diode Tax" Visualized:** At low ambient power (0 dBm), the 4-diode Cockcroft-Walton multiplier completely collapses. The weak incoming signal is entirely consumed trying to overcome the forward turn-on threshold of the cascaded series junctions.
+
+---
+
+### 🧠 Hard Engineering Lessons Learned
+
+#### 1. The Parasitic Capacitance Trap
+Adding diodes to scale voltage multiplier stages multiplies the effective capacitance (`C_eff`) seen by the RF source. Shifting from the half-wave baseline to the voltage doubler doubled the capacitive load to **0.36 pF**, throwing the original 23.4 nH network entirely out of resonance and reflecting the incoming power. 
+
+* **The Fix:** Applied the high-frequency resonance formula `L = 1 / ((2πf)² · C_eff)` to calculate and swap in an **11.7 nH** inductor. This restored impedance matching, causing efficiency to skyrocket from **4.45% to 91.78%**.
+
+#### 2. Physical Layout Constraints vs. Whiteboard Theory
+While a 2-stage Cockcroft-Walton ladder looks great on paper and outperforms other networks at high power levels (+20 dBm yielding 4.09 V), it represents an engineering dead-end for low-power 2.45 GHz ambient harvesting. Stacking four diodes drops the required tuning inductance below **5 nH**. On a physical FR4 PCB, standard copper trace geometries introduce **2 nH to 3 nH** of unavoidable parasitic inductance alone, leaving zero physical manufacturing margin to place a discrete component without detuning the circuit.
+
+#### 3. Pareto-Optimal Selection
+The co-simulation data definitively establishes the **Tuned Single-Stage Voltage Doubler** as the optimal architecture. It minimizes forward voltage thresholds, limits parasitic capacitance to a matchable range, and incorporates a shared ground plane that eliminates the radiative losses seen in floating differential full-wave bridges.

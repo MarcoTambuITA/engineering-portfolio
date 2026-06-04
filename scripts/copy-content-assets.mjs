@@ -18,8 +18,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT = path.resolve(__dirname, "..");
 
-const CONTENT_SRC = path.join(ROOT, "content", "projects");
-const PUBLIC_DEST = path.join(ROOT, "public", "content", "projects");
+const CONTENT_SRC_PROJECTS = path.join(ROOT, "content", "projects");
+const PUBLIC_DEST_PROJECTS = path.join(ROOT, "public", "content", "projects");
+
+const CONTENT_SRC_INVOLVEMENT = path.join(ROOT, "content", "involvement");
+const PUBLIC_DEST_INVOLVEMENT = path.join(ROOT, "public", "content", "involvement");
 
 // File extensions to copy
 const ASSET_EXTENSIONS = new Set([
@@ -62,45 +65,51 @@ function copyAssets(srcDir, destDir) {
 
 console.log("📦 Copying content assets to public/...");
 
-if (!fs.existsSync(CONTENT_SRC)) {
-  console.log("   No content/projects/ directory found. Skipping.");
-  process.exit(0);
-}
-
-// Clean previous output to avoid stale assets
-if (fs.existsSync(PUBLIC_DEST)) {
-  fs.rmSync(PUBLIC_DEST, { recursive: true, force: true });
-}
-
-ensureDir(PUBLIC_DEST);
-
-const projectDirs = fs
-  .readdirSync(CONTENT_SRC, { withFileTypes: true })
-  .filter((d) => d.isDirectory());
-
-let totalFiles = 0;
-
-for (const dir of projectDirs) {
-  const srcProjectDir = path.join(CONTENT_SRC, dir.name);
-  const destProjectDir = path.join(PUBLIC_DEST, dir.name);
-  ensureDir(destProjectDir);
-  copyAssets(srcProjectDir, destProjectDir);
-
-  // Count copied files
-  const countFiles = (d) => {
-    let count = 0;
-    for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
-      if (entry.isDirectory()) count += countFiles(path.join(d, entry.name));
-      else count++;
-    }
-    return count;
-  };
-
-  if (fs.existsSync(destProjectDir)) {
-    const count = countFiles(destProjectDir);
-    totalFiles += count;
-    console.log(`   ✅ ${dir.name}: ${count} assets`);
+function processDirectory(srcPath, destPath, typeLabel) {
+  if (!fs.existsSync(srcPath)) {
+    console.log(`   No ${typeLabel} directory found. Skipping.`);
+    return 0;
   }
+
+  // Clean previous output to avoid stale assets
+  if (fs.existsSync(destPath)) {
+    fs.rmSync(destPath, { recursive: true, force: true });
+  }
+
+  ensureDir(destPath);
+
+  const projectDirs = fs
+    .readdirSync(srcPath, { withFileTypes: true })
+    .filter((d) => d.isDirectory());
+
+  let totalFiles = 0;
+
+  for (const dir of projectDirs) {
+    const srcProjectDir = path.join(srcPath, dir.name);
+    const destProjectDir = path.join(destPath, dir.name);
+    ensureDir(destProjectDir);
+    copyAssets(srcProjectDir, destProjectDir);
+
+    // Count copied files
+    const countFiles = (d) => {
+      let count = 0;
+      for (const entry of fs.readdirSync(d, { withFileTypes: true })) {
+        if (entry.isDirectory()) count += countFiles(path.join(d, entry.name));
+        else count++;
+      }
+      return count;
+    };
+
+    if (fs.existsSync(destProjectDir)) {
+      const count = countFiles(destProjectDir);
+      totalFiles += count;
+      console.log(`   ✅ [${typeLabel}] ${dir.name}: ${count} assets`);
+    }
+  }
+  return totalFiles;
 }
 
-console.log(`\n📦 Done! Copied ${totalFiles} assets from ${projectDirs.length} projects.\n`);
+const projectsFiles = processDirectory(CONTENT_SRC_PROJECTS, PUBLIC_DEST_PROJECTS, "projects");
+const involvementFiles = processDirectory(CONTENT_SRC_INVOLVEMENT, PUBLIC_DEST_INVOLVEMENT, "involvement");
+
+console.log(`\n📦 Done! Copied ${projectsFiles + involvementFiles} total assets.\n`);

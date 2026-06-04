@@ -23,3 +23,17 @@ export function getProjectImagePath(slug: string, filename: string): string {
 export function getProjectReportPath(slug: string): string {
   return `/content/projects/${slug}/report.pdf`;
 }
+
+/**
+ * Returns the public URL path for an involvement cover image.
+ */
+export function getInvolvementCoverPath(slug: string, cover: string): string {
+  return `/content/involvement/${slug}/images/${cover}`;
+}
+
+/**
+ * Returns the public URL path for an involvement gallery image.
+ */
+export function getInvolvementImagePath(slug: string, filename: string): string {
+  return `/content/involvement/${slug}/images/${filename}`;
+}

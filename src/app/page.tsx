@@ -7,9 +7,11 @@ import Involvement from "@/components/sections/Involvement";
 import Journey from "@/components/sections/Journey";
 import Contact from "@/components/sections/Contact";
 import { getAllProjects } from "@/lib/projects";
+import { getAllInvolvements } from "@/lib/involvement";
 
 export default function Home() {
   const projects = getAllProjects();
+  const involvements = getAllInvolvements();
 
   return (
     <>
@@ -19,7 +21,7 @@ export default function Home() {
         <About />
         <Skills />
         <Projects projects={projects} />
-        <Involvement />
+        <Involvement involvements={involvements} />
         <Journey />
         <Contact />
       </main>

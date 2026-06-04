@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { getProjectImagePath } from "@/lib/paths";
+import { getProjectImagePath, getInvolvementImagePath } from "@/lib/paths";
 
 // Dynamically import lightbox to reduce initial bundle size
 const Lightbox = dynamic(() => import("yet-another-react-lightbox"), {
@@ -17,12 +17,14 @@ interface ImageGalleryProps {
   slug: string;
   images: string[];
   projectTitle: string;
+  type?: "project" | "involvement";
 }
 
 export default function ImageGallery({
   slug,
   images,
   projectTitle,
+  type = "project",
 }: ImageGalleryProps) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
@@ -30,7 +32,7 @@ export default function ImageGallery({
   if (images.length === 0) return null;
 
   const slides = images.map((img) => ({
-    src: getProjectImagePath(slug, img),
+    src: type === "involvement" ? getInvolvementImagePath(slug, img) : getProjectImagePath(slug, img),
     alt: `${projectTitle} — ${img.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ")}`,
   }));
 
@@ -51,7 +53,7 @@ export default function ImageGallery({
             className="relative aspect-video rounded-lg overflow-hidden group cursor-pointer"
           >
             <Image
-              src={getProjectImagePath(slug, img)}
+              src={type === "involvement" ? getInvolvementImagePath(slug, img) : getProjectImagePath(slug, img)}
               alt={`${projectTitle} — ${img.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ")}`}
               fill
               className="object-cover transition-transform duration-300 group-hover:scale-105"

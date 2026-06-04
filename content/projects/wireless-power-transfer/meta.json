@@ -1,11 +1,17 @@
 {
-  "title": "Wireless Power Transfer System",
-  "date": "2024-11-20",
-  "semester": "Fall 2024",
-  "description": "Engineered a magnetic resonant wireless power transfer system and a Python-based simulation tool to optimize coil coupling and efficiency.",
-  "tags": ["Python", "Electromagnetics", "Simulation", "Circuit Design"],
+  "title": "Wireless Power Transfer System SImulator",
+  "date": "2026-06-01",
+  "semester": "Summer 2026",
+  "description": "Designed a unified MATLAB simulator for dual-regime wireless power transfer (WPT) link budgets. Models resonant inductive near-field and radiative far-field crossovers with strict physical boundary masking and native LTspice log parsing.",
+  "tags": [
+    "Python",
+    "Electromagnetics",
+    "Simulation",
+    "Circuit Design",
+    "MATLAB"
+  ],
   "category": "RF & Electromagnetics",
   "cover": "wpt_cover.jpg",
-  "github": "https://github.com/MarcoTambuITA/WPT_Python",
+  "github": "https://github.com/MarcoTambuITA/WPT-System-Simulator",
   "featured": true
 }

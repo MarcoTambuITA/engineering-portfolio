@@ -31,7 +31,7 @@ const ENGINEERING_TOOLS: SkillItem[] = [
 ];
 
 const CURRENTLY_LEARNING: SkillItem[] = [
-  { name: "Altium PCB Design", icon: "📋" },
+  { name: "Ansys HFSS", icon: "📋" },
   { name: "Keysight RF Certification", icon: "📡" },
   { name: "FPGA / Verilog", icon: "🧩" },
 ];

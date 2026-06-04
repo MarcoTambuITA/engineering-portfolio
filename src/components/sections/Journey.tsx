@@ -11,8 +11,8 @@ interface TimelineEntry {
 
 const TIMELINE: TimelineEntry[] = [
   {
-    semester: "Summer 2025",
-    period: "Jun – Aug 2025",
+    semester: "Summer 2026",
+    period: "Jun – Aug 2026",
     highlights: [
       "Power Engineering Intern at Newkirk Electric Associates, Michigan",
       "Built the WPT System Simulator — a wireless power transfer modeling tool",
@@ -20,21 +20,21 @@ const TIMELINE: TimelineEntry[] = [
     ],
   },
   {
-    semester: "Spring 2025",
-    period: "Jan – May 2025",
+    semester: "Spring 2026",
+    period: "Jan – May 2026",
     highlights: [
       "Completed Digital Circuits, Calculus 2, and Physics",
       "Built wearable accelerometer project (Arduino Nano 33 BLE + Flutter app)",
       "Elected Professional Development Chair at IEEE @ USF",
+      "Worked on the IEEE Electrathon car - designed a buck converter in Altium Designer",
       "Secured power engineering internship at Newkirk Electric",
-      "Won USF innovation challenge — pitched in Minneapolis, secured $10k+ in funding",
+      "Won USF innovation challenge — joined SYP hydration - pitched in Minneapolis, secured $10k+ in funding",
       "Elected Special Events Coordinator for Engineering Ambassadors",
-      "Joined SYP startup accelerator program",
     ],
   },
   {
-    semester: "Fall 2024",
-    period: "Aug – Dec 2024",
+    semester: "Fall 2025",
+    period: "Aug – Dec 2025",
     highlights: [
       "Started at USF as Electrical Engineering Freshman",
       "Joined Engineering Ambassadors program",

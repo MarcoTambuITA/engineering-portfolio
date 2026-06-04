@@ -1,33 +1,16 @@
 "use client";
 
+import Link from "next/link";
+import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
 import SectionHeading from "@/components/SectionHeading";
+import type { Involvement as InvolvementType } from "@/lib/involvement";
 
-const INVOLVEMENTS = [
-  {
-    title: "Engineering Contributor",
-    organization: "Student Yacht Program (SYP)",
-    icon: "🚀",
-    description:
-      "Engineering contributor in USF's startup accelerator program, working with a cross-functional team to develop and pitch technology-driven solutions to real-world problems. Secured $10,000+ in funding after pitching at the Minneapolis innovation challenge.",
-  },
-  {
-    title: "Professional Development Chair",
-    organization: "IEEE @ USF",
-    icon: "⚡",
-    description:
-      "Responsible for organizing career-focused events, industry speaker sessions, and skill-building workshops for the chapter's engineering student members. Building a bridge between academic learning and professional readiness.",
-  },
-  {
-    title: "Special Events Coordinator",
-    organization: "Engineering Ambassadors",
-    icon: "🎯",
-    description:
-      "Lead coordination efforts for major outreach events such as EXPO and SHPE Jr. Noche de Ciencias. Organize ambassador participation by recruiting, scheduling, and managing involvement. Interview and help select new members for the program.",
-  },
-];
+interface InvolvementProps {
+  involvements: InvolvementType[];
+}
 
-export default function Involvement() {
+export default function Involvement({ involvements }: InvolvementProps) {
   return (
     <section id="involvement" className="py-section">
       <div className="section-container">
@@ -37,23 +20,49 @@ export default function Involvement() {
         />
 
         <div className="grid md:grid-cols-3 gap-6">
-          {INVOLVEMENTS.map((item, i) => (
-            <ScrollReveal key={item.title} delay={i * 0.1}>
-              <div className="glass-card p-6 md:p-8 h-full group hover:border-electric-500/20 transition-all duration-300 glow-border">
-                {/* Icon */}
-                <div className="text-4xl mb-4">{item.icon}</div>
+          {involvements.map((item, i) => (
+            <ScrollReveal key={item.slug} delay={i * 0.1}>
+              <Link href={`/involvement/${item.slug}`} className="block h-full">
+                <motion.div
+                  className="glass-card h-full flex flex-col group hover:border-electric-500/20 transition-all duration-300 relative overflow-hidden"
+                  whileHover={{
+                    y: -6,
+                    transition: { duration: 0.3, ease: "easeOut" },
+                  }}
+                >
+                  {item.coverImage && (
+                    <div className="h-48 w-full overflow-hidden shrink-0">
+                      <img
+                        src={`/content/involvement/${item.slug}/images/${item.coverImage}`}
+                        alt={item.meta.title}
+                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
+                  )}
+                  <div className="p-6 md:p-8 flex flex-col flex-grow relative z-10">
+                    {/* Icon */}
+                    <div className="text-4xl mb-4 relative z-10">{item.meta.icon}</div>
 
-                {/* Content */}
-                <h3 className="text-lg font-heading font-bold text-white mb-1 group-hover:text-electric-400 transition-colors">
-                  {item.title}
-                </h3>
-                <p className="text-electric-400/70 text-sm font-mono mb-4">
-                  {item.organization}
-                </p>
-                <p className="text-gray-400 text-sm leading-relaxed">
-                  {item.description}
-                </p>
-              </div>
+                    {/* Content */}
+                    <h3 className="text-lg font-heading font-bold text-white mb-1 group-hover:text-electric-400 transition-colors relative z-10">
+                      {item.meta.title}
+                    </h3>
+                    <p className="text-electric-400/70 text-sm font-mono mb-4 relative z-10">
+                      {item.meta.organization}
+                    </p>
+                    <p className="text-gray-400 text-sm leading-relaxed relative z-10">
+                      {item.meta.description}
+                    </p>
+                  </div>
+
+                  {/* Hover glow effect */}
+                  <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{
+                      boxShadow: "inset 0 0 0 1px rgba(59, 130, 246, 0.2), 0 0 30px rgba(59, 130, 246, 0.08)",
+                    }}
+                  />
+                </motion.div>
+              </Link>
             </ScrollReveal>
           ))}
         </div>

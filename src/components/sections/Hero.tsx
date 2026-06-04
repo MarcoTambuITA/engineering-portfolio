@@ -147,7 +147,7 @@ export default function Hero() {
           variants={childVariants}
           className="text-gray-500 text-base md:text-lg mb-10"
         >
-          University of South Florida · Class of 2028
+          University of South Florida · Class of 2029
         </motion.p>
 
         {/* CTA Buttons */}
