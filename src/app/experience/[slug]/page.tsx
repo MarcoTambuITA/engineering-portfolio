@@ -1,22 +1,24 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import Link from "next/link";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import rehypePrettyCode from "rehype-pretty-code";
 import remarkGfm from "remark-gfm";
 import {
-  getAllInvolvementSlugs,
-  getInvolvementBySlug,
-} from "@/lib/involvement";
+  getAllExperienceSlugs,
+  getExperienceBySlug,
+} from "@/lib/experience";
 import Navbar from "@/components/Navbar";
 import ImageGallery from "@/components/ImageGallery";
 import CopyButton from "@/components/CopyButton";
 import { rehypeExtractRawCode } from "@/lib/rehype-extract-raw-code";
+import { getExperienceCoverPath } from "@/lib/paths";
 
 // ===== STATIC PARAMS =====
 
 export function generateStaticParams() {
-  const slugs = getAllInvolvementSlugs();
+  const slugs = getAllExperienceSlugs();
   return slugs.map((slug) => ({ slug }));
 }
 
@@ -27,15 +29,15 @@ export function generateMetadata({
 }: {
   params: { slug: string };
 }): Metadata {
-  const involvement = getInvolvementBySlug(params.slug);
+  const experience = getExperienceBySlug(params.slug);
 
-  if (!involvement) {
-    return { title: "Involvement Not Found" };
+  if (!experience) {
+    return { title: "Experience Not Found" };
   }
 
   return {
-    title: involvement.meta.title,
-    description: involvement.meta.description,
+    title: `${experience.meta.title} at ${experience.meta.company}`,
+    description: experience.meta.description,
   };
 }
 
@@ -114,20 +116,38 @@ const mdxComponents = {
   ),
 };
 
+// ===== HELPER =====
+
+function formatDateRange(startDate: string, endDate?: string): string {
+  const format = (d: string) => {
+    const [year, month] = d.split("-");
+    const date = new Date(Number(year), Number(month) - 1);
+    return date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  };
+
+  const start = format(startDate);
+
+  if (!endDate || endDate.toLowerCase() === "present") {
+    return `${start} — Present`;
+  }
+
+  return `${start} — ${format(endDate)}`;
+}
+
 // ===== PAGE COMPONENT =====
 
-export default function InvolvementPage({
+export default function ExperiencePage({
   params,
 }: {
   params: { slug: string };
 }) {
-  const involvement = getInvolvementBySlug(params.slug);
+  const experience = getExperienceBySlug(params.slug);
 
-  if (!involvement) {
+  if (!experience) {
     notFound();
   }
 
-  const { meta, writeupContent, images, slug } = involvement;
+  const { meta, writeupContent, images, slug } = experience;
 
   return (
     <>
@@ -137,7 +157,7 @@ export default function InvolvementPage({
         <article className="section-container max-w-4xl mx-auto">
           {/* Back Link */}
           <Link
-            href="/#involvement"
+            href="/#experience"
             className="inline-flex items-center gap-2 text-gray-400 hover:text-electric-400 transition-colors mb-8 group"
           >
             <svg
@@ -153,27 +173,39 @@ export default function InvolvementPage({
                 d="M10 19l-7-7m0 0l7-7m-7 7h18"
               />
             </svg>
-            Back to involvement
+            Back to experience
           </Link>
 
           {/* Title & Meta */}
           <header className="mb-8">
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4">
-              {meta.organization} - {meta.title}
-            </h1>
+            <div className="flex items-center gap-4 mb-4">
+              {meta.logo && (
+                <div className="w-16 h-16 rounded-xl bg-navy-700/50 border border-navy-600/30 flex items-center justify-center shrink-0 overflow-hidden">
+                  <img
+                    src={`/content/experience/${slug}/images/${meta.logo}`}
+                    alt={`${meta.company} logo`}
+                    className="w-full h-full object-contain p-2"
+                  />
+                </div>
+              )}
+              <div>
+                <h1 className="text-4xl md:text-5xl font-heading font-bold text-white">
+                  {meta.title}
+                </h1>
+                <p className="text-electric-400 text-lg font-mono mt-1">
+                  {meta.company}
+                </p>
+              </div>
+            </div>
 
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400 mb-6">
-              <span className="font-mono">{meta.semester}</span>
-              {meta.date && (
+              <span className="font-mono">
+                {formatDateRange(meta.startDate, meta.endDate)}
+              </span>
+              {meta.location && (
                 <>
                   <span className="w-1 h-1 rounded-full bg-gray-600" />
-                  <span>
-                    {new Date(meta.date).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </span>
+                  <span>{meta.location}</span>
                 </>
               )}
             </div>
@@ -182,10 +214,7 @@ export default function InvolvementPage({
             {meta.tags && meta.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-8">
                 {meta.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="tech-badge text-xs"
-                  >
+                  <span key={tag} className="tech-badge text-xs">
                     {tag}
                   </span>
                 ))}
@@ -193,7 +222,19 @@ export default function InvolvementPage({
             )}
           </header>
 
-
+          {/* Hero Image */}
+          {meta.cover && (
+            <div className="relative aspect-video rounded-xl overflow-hidden mb-12">
+              <Image
+                src={getExperienceCoverPath(slug, meta.cover)}
+                alt={meta.title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 896px) 100vw, 896px"
+                priority
+              />
+            </div>
+          )}
 
           {/* MDX Content */}
           <div className="prose-custom my-12">
@@ -225,7 +266,7 @@ export default function InvolvementPage({
               slug={slug}
               images={images}
               projectTitle={meta.title}
-              type="involvement"
+              type="experience"
             />
           )}
         </article>

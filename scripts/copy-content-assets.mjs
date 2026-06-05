@@ -24,6 +24,9 @@ const PUBLIC_DEST_PROJECTS = path.join(ROOT, "public", "content", "projects");
 const CONTENT_SRC_INVOLVEMENT = path.join(ROOT, "content", "involvement");
 const PUBLIC_DEST_INVOLVEMENT = path.join(ROOT, "public", "content", "involvement");
 
+const CONTENT_SRC_EXPERIENCE = path.join(ROOT, "content", "experience");
+const PUBLIC_DEST_EXPERIENCE = path.join(ROOT, "public", "content", "experience");
+
 // File extensions to copy
 const ASSET_EXTENSIONS = new Set([
   ".jpg",
@@ -111,5 +114,6 @@ function processDirectory(srcPath, destPath, typeLabel) {
 
 const projectsFiles = processDirectory(CONTENT_SRC_PROJECTS, PUBLIC_DEST_PROJECTS, "projects");
 const involvementFiles = processDirectory(CONTENT_SRC_INVOLVEMENT, PUBLIC_DEST_INVOLVEMENT, "involvement");
+const experienceFiles = processDirectory(CONTENT_SRC_EXPERIENCE, PUBLIC_DEST_EXPERIENCE, "experience");
 
-console.log(`\n📦 Done! Copied ${projectsFiles + involvementFiles} total assets.\n`);
+console.log(`\n📦 Done! Copied ${projectsFiles + involvementFiles + experienceFiles} total assets.\n`);

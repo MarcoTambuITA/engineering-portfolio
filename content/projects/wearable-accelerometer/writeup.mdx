@@ -1,82 +1,32 @@
-# Wearable Accelerometer Data Logger
-
 ## The Problem
-
-Traditional motion analysis in sports and rehabilitation requires expensive lab equipment that isn't accessible to most students and researchers. I wanted to build a **portable, low-cost system** that could log accelerometer data in real-time and make it accessible through a mobile app.
+Traditional velocity-based training (VBT) requires expensive, cumbersome equipment to track barbell kinematics. I wanted to engineer a portable, low-cost inertial measurement system that could calculate Mean Concentric Velocity (MCV) and Peak Concentric Velocity (PCV) in real-time, pairing directly with a custom mobile application for immediate lifter feedback.
 
 ## My Approach
+Instead of relying on basic accelerometers, I built this hardware ecosystem around the **Bosch BMI270 IMU**. To ensure accurate 3D spatial orientation during dynamic lifts, I implemented the **Madgwick AHRS (Attitude and Heading Reference System)** sensor fusion algorithm.
 
-I built this project around the **Arduino Nano 33 BLE Rev2**, which has a built-in LSM9DS1 IMU (9-axis accelerometer, gyroscope, and magnetometer). The key design decisions were:
+The system architecture bridges embedded C++ firmware with a cross-platform Flutter application and a Firebase cloud backend.
 
-1. **Bluetooth Low Energy (BLE)** for wireless data streaming — low power consumption and native mobile support
-2. **Flutter** for the mobile app — cross-platform (iOS + Android) from a single codebase
-3. **Firebase** for cloud storage — real-time database for logging sessions
+### Firmware & Sensor Fusion
+The wearable's logic is driven by custom C++ firmware that handles:
 
-### Hardware
+* **Sensor Interfacing:** Communicating directly with the BMI270 to pull high-frequency raw kinematic data.
+* **Calibration Routines:** Executing dedicated scripts for Gyroscope and Magnetometer calibration to eliminate drift and hard/soft iron biases.
+* **Data Processing:** Running the Madgwick filter on-device to compute stable spatial orientations before transmission.
+* **BLE Telemetry:** Streaming the processed metrics via a custom Velocity-Based Training Bluetooth service (`ble_vbt_service`).
 
-The sensor module consists of:
+### Mobile Application (Flutter)
+I developed a cross-platform companion app to ingest and visualize the BLE data stream. Key features include:
 
-- Arduino Nano 33 BLE Rev2 (Cortex-M4F processor, BLE 5.0)
-- 3.7V LiPo battery with voltage regulator
-- Custom 3D-printed wrist enclosure (designed in Fusion 360)
-
-### Firmware
-
-The Arduino firmware handles:
-
-```cpp
-#include <ArduinoBLE.h>
-#include <Arduino_LSM9DS1.h>
-
-BLEService accelService("19B10000-E8F2-537E-4F6C-D104768A1214");
-BLECharacteristic accelChar("19B10001-E8F2-537E-4F6C-D104768A1214",
-                            BLERead | BLENotify, 12);
-
-void setup() {
-  IMU.begin();
-  BLE.begin();
-  BLE.setLocalName("AccelLogger");
-  BLE.setAdvertisedService(accelService);
-  accelService.addCharacteristic(accelChar);
-  BLE.addService(accelService);
-  BLE.advertise();
-}
-```
-
-Data is sampled at **100 Hz** and transmitted as packed float arrays over BLE notifications.
-
-### Mobile App
-
-The Flutter app provides:
-
-- **Real-time plotting** of X, Y, Z acceleration data
-- **Session recording** with start/stop controls
-- **Data export** to CSV for MATLAB analysis
-- **Firebase sync** for cloud backup of all sessions
-
-## Results
-
-The system achieved:
-
-| Metric | Value |
-|--------|-------|
-| Sampling Rate | 100 Hz |
-| BLE Latency | < 15 ms |
-| Battery Life | ~4 hours continuous |
-| Data Accuracy | ±0.01 g resolution |
-
-The wearable successfully logged motion data during walking, running, and hand gesture recognition tests. Data was exported to MATLAB for spectral analysis and pattern classification.
+* **Live Metrics Engine:** A dedicated `metrics_calculator` and `set_tracker` to translate raw IMU data into actionable lifting metrics.
+* **Data Dashboards:** Interactive UI pages, including a `metrics_dashboard_page` and `progress_chart_page`, to visualize range of motion and velocity trends over time.
+* **Cloud Architecture:** Full integration with Firebase for secure authentication and Cloud Firestore to back up `workout_plan`, `set_summary`, and `rep_record` documents.
+* **PDF Export:** A dedicated `pdf_export_service` allowing users to generate shareable reports of their training blocks.
 
 ## Lessons Learned
-
-- **BLE data throughput** is limited — I had to carefully pack the 12-byte float payloads and optimize the connection interval
-- **Battery management** is critical for wearables — the BLE radio draws significant current during advertising
-- **Cross-platform mobile development** with Flutter saved enormous time compared to building native iOS and Android apps separately
-- **Signal processing fundamentals** matter — raw accelerometer data is noisy, and I learned to apply low-pass filtering before analysis
+* **Sensor Fusion is Math-Heavy:** Relying purely on raw accelerometer data results in noisy, unusable velocity integrations. Implementing the Madgwick algorithm was critical for stabilizing the orientation tracking.
+* **Asynchronous State Management:** Handling real-time BLE streams in Flutter while simultaneously syncing batch records to Firestore required careful architectural planning to prevent UI stutter.
+* **Calibration is Mandatory:** I had to write isolated magnetometer and gyroscope calibration firmware to ensure the sensor data was strictly baselined before any lifting math could occur.
 
 ## What's Next
-
-I'm planning to add:
-- **Edge ML** on the Arduino using TensorFlow Lite for on-device gesture classification
-- **PCB design** in Altium to replace the breadboard prototype with a custom board
-- **Additional sensors** (heart rate, temperature) for a more complete health monitoring platform
+* **PCB Design:** Migrating the prototype from a breadboard/dev-board onto a custom-designed PCB engineered in Altium Designer.
+* **Social Features:** Expanding the Firestore schema to allow for social sharing and coach-to-athlete workout plan distributions.

@@ -37,3 +37,17 @@ export function getInvolvementCoverPath(slug: string, cover: string): string {
 export function getInvolvementImagePath(slug: string, filename: string): string {
   return `/content/involvement/${slug}/images/${filename}`;
 }
+
+/**
+ * Returns the public URL path for an experience cover image.
+ */
+export function getExperienceCoverPath(slug: string, cover: string): string {
+  return `/content/experience/${slug}/images/${cover}`;
+}
+
+/**
+ * Returns the public URL path for an experience gallery image.
+ */
+export function getExperienceImagePath(slug: string, filename: string): string {
+  return `/content/experience/${slug}/images/${filename}`;
+}

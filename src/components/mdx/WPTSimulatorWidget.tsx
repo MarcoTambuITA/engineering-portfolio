@@ -247,7 +247,8 @@ export default function WPTSimulatorWidget() {
                   }}
                   itemStyle={{ color: "#38bdf8", fontSize: "12px", fontFamily: "monospace" }}
                   labelStyle={{ color: "#8b949e", fontSize: "11px", fontFamily: "monospace" }}
-                  formatter={(value: number) => [`${value.toFixed(3)}%`, "Total Efficiency"]}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any) => [`${Number(value).toFixed(3)}%`, "Total Efficiency"]}
                   labelFormatter={(label, items) => {
                     const regime = items[0]?.payload?.regime || "";
                     return `Distance: ${label} cm [${regime}]`;

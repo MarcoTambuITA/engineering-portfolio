@@ -12,6 +12,7 @@ An open-source, dual-regime simulation framework that co-simulates spatial elect
 ---
 
 ### 🛠️ System Architecture & Data Pipeline
+This is a very basic and simpler model of what I did on MATLAB and Python. (It might not be as accurate)
 <WPTSimulatorWidget />
 
 * **Stateless Physics Core (`physics.py`):** Models near-field inductive coupling from first principles using the Neumann mutual inductance formula and the coupled-resonator figure of merit `U = k√(Q_1 Q_2)` (yielding a characteristic **1/d⁶** drop-off). Seamlessly transitions to far-field radiative limits via the Friis transmission equation (**1/d²** drop-off) using active frequency-dependent domain masks.

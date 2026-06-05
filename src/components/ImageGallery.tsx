@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { getProjectImagePath, getInvolvementImagePath } from "@/lib/paths";
+import { getProjectImagePath, getInvolvementImagePath, getExperienceImagePath } from "@/lib/paths";
 
 // Dynamically import lightbox to reduce initial bundle size
 const Lightbox = dynamic(() => import("yet-another-react-lightbox"), {
@@ -17,7 +17,7 @@ interface ImageGalleryProps {
   slug: string;
   images: string[];
   projectTitle: string;
-  type?: "project" | "involvement";
+  type?: "project" | "involvement" | "experience";
 }
 
 export default function ImageGallery({
@@ -32,7 +32,7 @@ export default function ImageGallery({
   if (images.length === 0) return null;
 
   const slides = images.map((img) => ({
-    src: type === "involvement" ? getInvolvementImagePath(slug, img) : getProjectImagePath(slug, img),
+    src: type === "involvement" ? getInvolvementImagePath(slug, img) : type === "experience" ? getExperienceImagePath(slug, img) : getProjectImagePath(slug, img),
     alt: `${projectTitle} — ${img.replace(/\.[^.]+$/, "").replace(/[-_]/g, " ")}`,
   }));
 
