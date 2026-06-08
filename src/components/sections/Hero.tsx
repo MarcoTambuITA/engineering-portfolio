@@ -165,9 +165,10 @@ export default function Hero() {
           >
             View My Work
           </a>
-          {/* TODO: Replace # with /resume.pdf when ready */}
           <a
-            href="#"
+            href="/Marco_Tamburini_Resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
             className="px-8 py-3.5 border border-navy-500 hover:border-electric-500/50 text-gray-300 hover:text-white font-semibold rounded-lg transition-all duration-200 backdrop-blur-sm"
           >
             Download Resume
