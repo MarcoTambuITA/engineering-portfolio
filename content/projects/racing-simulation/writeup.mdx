@@ -1,0 +1,26 @@
+## The Problem
+In motorsport, shaving milliseconds off a lap time requires deep analysis of driver inputs and vehicle dynamics. Professional telemetry software is often proprietary and expensive. I wanted to build a custom, end-to-end telemetry platform capable of ingesting raw racing data, analyzing delta times, and providing actionable coaching feedback through an interactive dashboard.
+
+## My Approach
+I architected a full-stack data processing and visualization pipeline using Python, SQLite, and Streamlit. The system is designed to handle high-frequency time-series data and extract meaningful performance metrics.
+
+### Data Pipeline & Storage
+* **Data Ingestion:** Developed scripts (`load_telemetry.py`, `generate_synthetic_log.py`) to parse raw telemetry logs and track coordinates into structured datasets.
+* **Database Architecture:** Implemented a relational database using SQLAlchemy (`models.py`, `telemetry.db`) to efficiently store and query driver sessions, lap records, and spatial telemetry points.
+* **Configuration Management:** Built parsers for vehicle physics and track parameters utilizing initialization files (`racecar.ini`, `generate_racecar_ini.py`) for modular simulation testing.
+
+### Analysis & Visualization (Streamlit)
+(Note: This is a very basic and simpler model of what I did on Python).
+<RacingSimulationWidget />
+
+To make the data accessible, I built a multi-page interactive web application (`telemetry_platform/app.py`) allowing for granular lap analysis:
+* **Live Telemetry & Driver Hub:** Engineered interactive dashboards (`1_Driver_Hub.py`, `2_Live_Telemetry.py`) to visualize speed, throttle, and braking inputs over the course of a lap.
+* **Ghost Coaching & Delta Analysis:** Wrote advanced comparative logic (`delta_time_analysis.py`, `visualize_ghost_line.py`) to overlay a driver's current racing line against their optimal "ghost" lap (`3_Ghost_Coaching.py`). This highlights exact braking zones and apex speeds where time is lost or gained.
+
+## Lessons Learned
+* **Time-Series Processing:** Handling thousands of high-frequency kinematic data points per lap requires efficient data structuring and filtering to prevent UI bottlenecking during visualization.
+* **Spatial Data Overlay:** Mapping XY track coordinates (`generate_track_csv.py`) onto time-deltas presented a complex mathematical challenge in aligning distance-based metrics with time-based logs for the ghost coaching feature.
+
+## What's Next
+* **Live Hardware Integration:** Transitioning the platform from static log-file parsing to real-time CAN bus data ingestion during live track testing.
+* **Predictive Modeling:** Expanding the Python backend to suggest optimal braking points based on historical tire degradation and track temperature data.

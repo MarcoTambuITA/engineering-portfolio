@@ -1,0 +1,16 @@
+{
+  "title": "Racing Simulation Telemetry",
+  "date": "2025-10-15",
+  "semester": "Fall 2025",
+  "description": "Interactive data analysis and visualization of racing telemetry metrics.",
+  "tags": [
+    "Data Analysis",
+    "Simulation",
+    "Python",
+    "MATLAB"
+  ],
+  "category": "Data Simulation",
+  "cover": "cover.png",
+  "github": "https://github.com/MarcoTambuITA/smart-racing-data",
+  "featured": false
+}

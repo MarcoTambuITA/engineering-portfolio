@@ -1,0 +1,16 @@
+{
+  "title": "5A Synchronous Buck Converter",
+  "date": "2026-02-20",
+  "semester": "Spring 2026",
+  "description": "Designed a 5A synchronous buck converter (24-29V to 5V) for the USF Electrathon vehicle, featuring a multi-layer PCB layout and extensive SI/PI and thermal management.",
+  "tags": [
+    "Altium Designer",
+    "PSpice",
+    "LTspice",
+    "PCB Design"
+  ],
+  "category": "Power Electronics",
+  "cover": "cover.png",
+  "github": "",
+  "featured": true
+}

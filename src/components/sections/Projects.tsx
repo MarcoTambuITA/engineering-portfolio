@@ -9,10 +9,7 @@ interface ProjectsSectionProps {
 }
 
 export default function Projects({ projects }: ProjectsSectionProps) {
-  const gridClasses =
-    projects.length <= 2
-      ? "flex flex-col md:flex-row gap-6 justify-center max-w-3xl mx-auto"
-      : "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6";
+  // Use a horizontal scrolling layout instead of a grid
 
   return (
     <section id="projects" className="py-section">
@@ -29,20 +26,22 @@ export default function Projects({ projects }: ProjectsSectionProps) {
             </p>
           </div>
         ) : (
-          <div className={gridClasses}>
+          <div className="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory hide-scrollbar items-stretch">
             {projects.map((project) => (
               <div
                 key={project.slug}
-                className={projects.length <= 2 ? "w-full md:w-96" : ""}
+                className="w-[85vw] sm:w-[350px] md:w-[400px] shrink-0 snap-start flex flex-col"
               >
-                <ProjectCard
-                  slug={project.slug}
-                  title={project.meta.title}
-                  description={project.meta.description}
-                  tags={project.meta.tags}
-                  semester={project.meta.semester}
-                  cover={project.meta.cover}
-                />
+                <div className="h-full">
+                  <ProjectCard
+                    slug={project.slug}
+                    title={project.meta.title}
+                    description={project.meta.description}
+                    tags={project.meta.tags}
+                    semester={project.meta.semester}
+                    cover={project.meta.cover}
+                  />
+                </div>
               </div>
             ))}
           </div>

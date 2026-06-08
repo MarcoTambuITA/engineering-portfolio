@@ -17,6 +17,7 @@ import PdfViewer from "@/components/PdfViewer";
 import CopyButton from "@/components/CopyButton";
 import { rehypeExtractRawCode } from "@/lib/rehype-extract-raw-code";
 import WPTSimulatorWidget from "@/components/mdx/WPTSimulatorWidget";
+import RacingSimulationWidget from "@/components/mdx/RacingSimulationWidget";
 
 // ===== STATIC PARAMS =====
 
@@ -130,6 +131,7 @@ const mdxComponents = {
     <td className="p-3 border border-navy-600/30 text-gray-300" {...props} />
   ),
   WPTSimulatorWidget,
+  RacingSimulationWidget,
 };
 
 // ===== PAGE COMPONENT =====

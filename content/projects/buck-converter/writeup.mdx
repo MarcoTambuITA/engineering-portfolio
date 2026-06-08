@@ -1,0 +1,54 @@
+# Synchronous Buck Converter: 5A Auxiliary Power Supply
+
+A high-efficiency, dual-layer DC-DC power supply designed to step down a 7S3P lithium-ion vehicle traction battery pack to a regulated 5V auxiliary rail. Engineered specifically for the University of South Florida (USF) Electrathon electric vehicle to power mission-critical telemetry systems, sensor arrays, and driver dashboard displays under racing conditions. Validated via LTspice/PSpice simulations and physically routed on a 2-layer production-ready PCB using Altium Designer.
+
+---
+
+### 🚀 The TL;DR (Core Impact)
+* **The Engineering Problem:** Stepping down a fluctuating 7S battery (V_in = 24.5V to 29.4V) to an auxiliary rail (V_out = 5.0V) at **5A continuous load** yields a highly constrained duty cycle (D = 17%). On a tight 2-layer PCB stackup, managing high di/dt switching noise loops and dumping component heat without a dedicated internal ground shield layer risks severe power integrity failure, telemetry corruption, and thermal throttling.
+* **The Solution:** A synchronous buck topology replacing the traditional freewheeling diode with an actively triggered low-R_ds(on) N-channel MOSFET, driven by tight layout geometry. High-current loops were restricted to the top layer while maximizing continuous copper pours on both layers to shield signals and dissipate heat.
+* **The Outcome:** Successfully engineered an Altium-certified, 2-layer power board achieving stable output regulation (Delta V_out = 50mV ripple) and validated thermal management under steady-state 5A loads using an integrated matrix of open thermal stitching vias.
+
+---
+
+### 🛠️ Power Stage Architecture & 2-Layer PI Design
+Operating with a large input-to-output voltage differential means the low-side conduction element remains active for roughly 83% of the total switching period (1-D). Under a 5A load, a standard asynchronous Schottky diode (V_f = 0.5V) would constantly waste over 2W of power as pure heat (P_loss = I_out * V_f * (1-D)). Switching to a synchronous MOSFET stage cut conduction losses exponentially by utilizing low channel resistance (P_loss = I_out^2 * R_ds(on) * (1-D)).
+
+
+
+[Image of synchronous buck converter circuit diagram]
+
+
+Because the design was restricted to a **2-layer PCB stackup**, achieving robust Power Integrity (PI) required strict geometric isolation of the switching loop currents:
+* **Top Layer (Layer 1):** Reserved explicitly for the primary high-frequency components. The input ceramic decoupling capacitors, high-side/low-side MOSFET junctions, and the power inductor were pushed into an ultra-tight physical grouping to keep the high $di/dt$ switching loop area as close to zero as possible.
+* **Bottom Layer (Layer 2):** Configured almost entirely as a solid, continuous Ground (GND) plane. This plane acts as a critical low-impedance return path directly beneath the top power traces, drastically lowering parasitic loop inductance ($L_stray$) and minimizing electromagnetic interference (EMI) without requiring a multi-layer board.
+
+---
+
+### 📊 Power Path Routing & Performance Validation
+
+The layout strategy utilized precise trace widths and polygon configurations calculated via IPC-2152 standards to eliminate parasitic voltage drops across the high-current nodes:
+
+| Circuit Node Path | Calculated Minimum Width (IPC-2152) | Implemented Altium Geometry | Simulated Voltage Drop (IR Drop) | Expected Temperature Rise (Delta T) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Main Input (V_IN Net)** | 85 mils | Solid Copper Polygon Pour | &lt; 0.25% | +12°C |
+| **Switch Node (V_SW Net)** | 110 mils | Short, Ultra-Wide Polygonal Polygon | &lt; 0.10% | +15°C |
+| **Main Output (V_OUT Net)** | 140 mils | Solid Copper Polygon Pour | &lt; 0.15% | +10°C |
+
+> 💡 **The 2-Layer Reality:** Without internal power planes, any copper narrowness under a sustained 5A current draw acts as an accidental resistor. Maximizing copper area via polygon pours was mandatory to ensure clean signal delivery to the car's telemetry compute core.
+
+---
+
+### 🧠 Hard Engineering Lessons Learned
+
+#### 1. Preventing the "Slicing" of the 2-Layer Ground Return
+On a 2-layer board, running analog feedback signal traces on the bottom layer can inadvertently cut the ground plane into isolated fragments, introducing long, inductive return paths that amplify switch-node ringing.
+* **The Fix:** Kept 100% of the high-power paths and low-power control circuitry routed cleanly on the top layer. The bottom layer ground copper was left entirely unbroken directly underneath the switching zone, ensuring return currents traveled the absolute shortest vertical distance back to the input bulk capacitors.
+
+#### 2. Thermal Management via Dual-Layer Copper Stitching
+Since FR4 substrate material exhibits terrible standalone thermal conductivity (approx 0.25 W/m*K), hot-spotting on a 2-layer board can rapidly desolder components or char the board. 
+* **The Fix:** Created a custom thermal chimney architecture directly inside Altium Designer. Massive copper polygon pours on the top layer were physically stitched to corresponding ground and power polygons on the bottom layer using a dense matrix of open, untented vias (0.3 mm hole diameter, 0.7 mm grid pitch). This leveraged the conductive properties of the copper barrel platings to spread heat symmetrically to the backside of the board, lowering operating junction temperatures.
+
+#### 3. Compensating for MLCC DC-Bias Degradation in PSpice
+Standard mathematical calculations treat capacitors as ideal, but Multi-Layer Ceramic Capacitors (MLCCs) lose up to 50% to 60% of their effective capacitance when operating near their rated DC voltage bias.
+* **The Fix:** Modeled the exact manufacturer-specific non-linear capacitor curves during SPICE simulation sweeps. To guarantee the target output voltage ripple (Delta V_out &lt;= 50mV) remained compliant under dynamic racing loads, the physical Bill of Materials (BOM) was over-spec'd to include parallel combinations of high-voltage rated ceramic MLCCs mixed with a bulk polymer electrolytic capacitor to retain capacitance under continuous bias conditions.

@@ -5,7 +5,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 import SectionHeading from "@/components/SectionHeading";
 
 export default function Education() {
-  const coursework = ["Digital Logic", "Circuit Analysis", "Embedded Systems"];
+  const coursework = ["Digital Circuits", "Physics", "EE systems"];
   const certifications = [
     {
       title: "MATLAB Certified",
