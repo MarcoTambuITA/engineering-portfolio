@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
 import SectionHeading from "@/components/SectionHeading";
@@ -63,9 +64,11 @@ export default function Experience({ experiences }: ExperienceProps) {
                         {/* Company logo */}
                         {item.meta.logo && (
                           <div className="w-12 h-12 rounded-lg bg-navy-700/50 border border-navy-600/30 flex items-center justify-center shrink-0 overflow-hidden">
-                            <img
+                            <Image
                               src={`/content/experience/${item.slug}/images/${item.meta.logo}`}
                               alt={`${item.meta.company} logo`}
+                              width={48}
+                              height={48}
                               className="w-full h-full object-contain p-1.5"
                             />
                           </div>

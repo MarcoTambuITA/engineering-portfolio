@@ -181,9 +181,11 @@ export default function ExperiencePage({
             <div className="flex items-center gap-4 mb-4">
               {meta.logo && (
                 <div className="w-16 h-16 rounded-xl bg-navy-700/50 border border-navy-600/30 flex items-center justify-center shrink-0 overflow-hidden">
-                  <img
+                  <Image
                     src={`/content/experience/${slug}/images/${meta.logo}`}
                     alt={`${meta.company} logo`}
+                    width={64}
+                    height={64}
                     className="w-full h-full object-contain p-2"
                   />
                 </div>

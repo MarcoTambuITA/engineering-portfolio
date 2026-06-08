@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   LineChart,
   Line,
@@ -210,7 +210,8 @@ export default function RacingSimulationWidget() {
                   }}
                   itemStyle={{ color: "#38bdf8", fontSize: "12px", fontFamily: "monospace" }}
                   labelStyle={{ display: "none" }}
-                  formatter={(value: number) => [`${value} mph`, "Speed"]}
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any) => [`${value} mph`, "Speed"]}
                 />
                 {/* Full Track Speed Profile (Grayed out) */}
                 <Line
@@ -226,7 +227,6 @@ export default function RacingSimulationWidget() {
                   x={currentData.distance}
                   stroke="#f43f5e"
                   strokeWidth={2}
-                  isAnimationActive={false}
                 />
               </LineChart>
             </ResponsiveContainer>

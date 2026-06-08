@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import ScrollReveal from "@/components/ScrollReveal";
 import SectionHeading from "@/components/SectionHeading";
@@ -31,11 +32,13 @@ export default function Involvement({ involvements }: InvolvementProps) {
                   }}
                 >
                   {item.coverImage && (
-                    <div className="h-48 w-full overflow-hidden shrink-0">
-                      <img
+                    <div className="relative h-48 w-full overflow-hidden shrink-0">
+                      <Image
                         src={`/content/involvement/${item.slug}/images/${item.coverImage}`}
                         alt={item.meta.title}
-                        className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        className="object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, 33vw"
                       />
                     </div>
                   )}
